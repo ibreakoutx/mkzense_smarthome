@@ -3,7 +3,7 @@
 //on mkzense.com
 //Do not set for local testing.
 
-const port = 3001;
+var port = 3001;
 if (process.env.MKZENSE_ENABLE_SSL) {
   port=80;
 }
@@ -24,10 +24,12 @@ const cons = require('consolidate');
 const swig = require('swig');
 
 //https setup
+var https;
+var options;
 if (process.env.MKZENSE_ENABLE_SSL) {
-  const https = require("https"),
+  https = require("https"),
         fs = require("fs");
-  const options = {
+  options = {
       cert: fs.readFileSync("/etc/letsencrypt/live/mkzense.com/fullchain.pem"),
       key: fs.readFileSync("/etc/letsencrypt/live/mkzense.com/privkey.pem")
   };

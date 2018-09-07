@@ -11,5 +11,8 @@ module.exports =  (router, expressApp, authRoutesMethods) => {
     //route for allowing existing users to login
     router.post('/login', logReqHeaders, expressApp.oauth.grant(), authRoutesMethods.login)
 
+    router.get('/login', (req,res) => {
+	res.render("login.html");
+    });
     return router
 }

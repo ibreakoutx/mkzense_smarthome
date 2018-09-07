@@ -46,6 +46,7 @@ function registerUser(req, res){
 
 
 function login(registerUserQuery, res){
+    console.log("****** In authrRoutesMethods.login *****");
 }
 
 //sends a response created out of the specified parameters to the client.
