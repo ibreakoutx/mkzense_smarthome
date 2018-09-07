@@ -105,7 +105,7 @@ function saveAccessToken(accessToken, clientID, expires, user, callback){
   If you create a userId you can access it in authenticated endpoints in the req.user.id object.
  */
 function getAccessToken(bearerToken, callback) {
-
+  console.log("** getAccessToken called **");
   //try and get the userID from the db using the bearerToken
   accessTokensDBHelper.getUserIDFromBearerToken(bearerToken, (userID) => {
 

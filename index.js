@@ -13,7 +13,10 @@ const mySqlConnection = require('./databaseHelpers/mySqlWrapper')
 const accessTokenDBHelper = require('./databaseHelpers/accessTokensDBHelper')(mySqlConnection)
 const userDBHelper = require('./databaseHelpers/userDBHelper')(mySqlConnection)
 const oAuthModel = require('./authorisation/accessTokenModel')(userDBHelper, accessTokenDBHelper)
-const oAuth2Server = require('node-oauth2-server')
+
+//const oAuth2Server = require('node-oauth2-server')
+const oAuth2Server = require('express-oauth-server')
+
 var OAuthError = require('node-oauth2-server/lib/error');
 const express = require('express')
 const expressApp = express()
@@ -45,11 +48,15 @@ expressApp.engine('.html', cons.swig);
 
 expressApp.use(express.static(path.join(__dirname, 'public')));
 
-expressApp.oauth = oAuth2Server({
+expressApp.oauth = new oAuth2Server({
   model: oAuthModel,
   grants: ['password'],
   debug: true,
-  accessTokenLifetime: 2000000000 //2 billion secs or 63 years, close to 2^31 - 1
+  accessTokenLifetime: 2000000000, //2 billion secs or 63 years, close to 2^31 - 1
+  options: {
+    useErrorHandler : false,
+    continueMiddleware : true
+  }
 })
 
 const restrictedAreaRoutesMethods = require('./restrictedArea/restrictedAreaRoutesMethods.js')
@@ -96,6 +103,10 @@ expressApp.get('/', (req,res) => {
     res.send("Hello World");
 });
 
+expressApp.get('/privacy', (req,res) => {
+    res.send("privacy policy");
+});
+
 //set the authRoutes for registration and & login requests
 expressApp.use('/auth', authRoutes)
 
@@ -119,7 +130,7 @@ expressApp.use(function (err, req, res, next) {
 });
 
 //MARK: --- INITIALISE MIDDLEWARE & ROUTES
-expressApp.use(expressApp.oauth.errorHandler()); // Send back oauth compliant response
+//expressApp.use(expressApp.oauth.errorHandler()); // Send back oauth compliant response
 
 //http listener
 expressApp.listen(port, () => {

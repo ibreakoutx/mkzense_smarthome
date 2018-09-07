@@ -45,8 +45,11 @@ function registerUser(req, res){
   }
 
 
-function login(registerUserQuery, res){
-    console.log("****** In authrRoutesMethods.login *****");
+function login(req,res){
+    console.log("****** In authRoutesMethods.login ***   " );
+    var location = res.locals.location + "#acccess_token=" + res.locals.oauth;
+    res.status = 302;
+    res.redirect(location);
 }
 
 //sends a response created out of the specified parameters to the client.
