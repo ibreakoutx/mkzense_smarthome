@@ -1,6 +1,12 @@
-//MARK: --- REQUIRE MODULES
+//Environment variable MKZENSE_ENABLE_SSL
+//if set will start SSL server, use only for deployment
+//on mkzense.com
+//Do not set for local testing.
 
 const port = 3001;
+if (process.env.MKZENSE_ENABLE_SSL) {
+  port=80;
+}
 const securePort = 443;
 
 const mySqlConnection = require('./databaseHelpers/mySqlWrapper')
@@ -18,14 +24,14 @@ const cons = require('consolidate');
 const swig = require('swig');
 
 //https setup
-/*
-const https = require("https"),
-      fs = require("fs");
-const options = {
-    cert: fs.readFileSync("/etc/letsencrypt/live/mkzense.com/fullchain.pem"),
-    key: fs.readFileSync("/etc/letsencrypt/live/mkzense.com/privkey.pem")
-};
-*/
+if (process.env.MKZENSE_ENABLE_SSL) {
+  const https = require("https"),
+        fs = require("fs");
+  const options = {
+      cert: fs.readFileSync("/etc/letsencrypt/live/mkzense.com/fullchain.pem"),
+      key: fs.readFileSync("/etc/letsencrypt/live/mkzense.com/privkey.pem")
+  };
+}
 
 expressApp.use(morgan('dev'));
 
@@ -65,17 +71,17 @@ req.on('end', function() {
  });
 */
 
-/*
-expressApp.use(function(req, res, next) {
-    if (req.secure) {
-        console.log("secure request");
-        next();
-    } else {
-        console.log("non-secure request, redirect to secure");
-        res.redirect('https://' + req.headers.host + req.url);
-    }
-});
-*/
+if (process.env.MKZENSE_ENABLE_SSL) {
+  expressApp.use(function(req, res, next) {
+      if (req.secure) {
+          console.log("secure request");
+          next();
+      } else {
+          console.log("non-secure request, redirect to secure");
+          res.redirect('https://' + req.headers.host + req.url);
+      }
+  });
+}
 
 //set the bodyParser to parse the urlencoded post data
 //parse application/x-www-form-urlencoded
@@ -118,9 +124,9 @@ expressApp.listen(port, () => {
     console.log(`listening (non-secure:http) on port ${port}`)
 })
 
-/*
-//https listener
-https.createServer(options, expressApp).listen(securePort, () =>{
-    console.log(`listening (secure:https) on port ${securePort}`)
-});
-*/
+if (process.env.MKZENSE_ENABLE_SSL) {
+  //https listener
+  https.createServer(options, expressApp).listen(securePort, () =>{
+      console.log(`listening (secure:https) on port ${securePort}`)
+  });
+}

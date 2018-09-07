@@ -239,6 +239,7 @@ app.options('/smarthome', function (request, response) {
  */
 function sync(data, response) {
   console.log('sync', JSON.stringify(data));
+  /*
   //let devices = app.smartHomePropertiesSync(data.uid);
   if (!devices) {
     response.status(500).set({
@@ -258,7 +259,7 @@ function sync(data, response) {
       deviceList.push(device);
     }
   });
-
+*/
   let deviceProps = {
     requestId: data.requestId,
     payload: deviceInfo.syncResponsePayload
