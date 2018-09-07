@@ -240,7 +240,6 @@ app.options('/smarthome', function (request, response) {
 function sync(data, response) {
   console.log('sync', JSON.stringify(data));
   //let devices = app.smartHomePropertiesSync(data.uid);
-  /*
   if (!devices) {
     response.status(500).set({
       'Access-Control-Allow-Origin': '*',
@@ -259,7 +258,6 @@ function sync(data, response) {
       deviceList.push(device);
     }
   });
-  */
 
   let deviceProps = {
     requestId: data.requestId,
@@ -431,16 +429,22 @@ function getDeviceIds(devices) {
  */
 function exec(data, response) {
   console.log('exec', JSON.stringify(data));
-  /*
+
   let respCommands = [];
   for (let i = 0; i < data.commands.length; i++) {
     let curCommand = data.commands[i];
+
     for (let j = 0; j < curCommand.execution.length; j++) {
+
       let curExec = curCommand.execution[j];
       let devices = curCommand.devices;
+
       for (let k = 0; k < devices.length; k++) {
-        let executionResponse = execDevice(data.uid, curExec, devices[k]);
+
+        let executionResponse = execDevice(deviceInfo.id, curExec, devices[k]);
+
         console.log("Device exec response", JSON.stringify(executionResponse));
+
         respCommands.push({
           ids: [devices[k].id],
           status: executionResponse.status,
@@ -458,7 +462,7 @@ function exec(data, response) {
   console.log('exec response', JSON.stringify(resBody));
   response.status(200).json(resBody);
   return resBody;
-  */
+
 }
 
 //registerAgent.exec = exec;
@@ -492,23 +496,29 @@ function exec(data, response) {
  * }
  */
 function execDevice(uid, command, device) {
-  /*
+
   let curDevice = {
     id: device.id,
     states: {}
   };
+
   Object.keys(command.params).forEach(function (key) {
     if (command.params.hasOwnProperty(key)) {
       curDevice.states[key] = command.params[key];
     }
   });
+
   let payLoadDevice = {
     ids: [curDevice.id],
     status: "SUCCESS",
-    states: {}
+    states: {online: true, on: true}
   };
+
+  /*
   let execDevice = app.smartHomeExec(uid, curDevice);
+
   console.info("execDevice", JSON.stringify(execDevice[device.id]));
+
   // Check whether the device exists or whether it exists and it is disconnected.
   if (!execDevice || !execDevice[device.id].states.online) {
     console.warn("The device you want to control is offline");
@@ -518,14 +528,17 @@ function execDevice(uid, command, device) {
     type: 'change',
     state: {}
   };
+
   // TODO - add error and debug to response
 
   deviceCommand.state[curDevice.id] = execDevice[curDevice.id].states;
+
   app.changeState(deviceCommand);
 
   execDevice = execDevice[curDevice.id];
 
   payLoadDevice.states = execDevice.states;
+*/
 
   Object.keys(command.params).forEach(function (key) {
     if (command.params.hasOwnProperty(key)) {
@@ -534,6 +547,7 @@ function execDevice(uid, command, device) {
       }
     }
   });
+
   return {status: "SUCCESS"};
-*/
+
 }
