@@ -102,18 +102,12 @@ expressApp.use('/auth', authRoutes)
 //set the restrictedAreaRoutes used to demo the accesiblity or routes that ar OAuth2 protected
 expressApp.use('/smarthome', restrictedAreaRoutes)
 
-expressApp.get('/login', (req,res) => {
-  //render login form
-  res.render("login.html");
-  //res.json({response:"Login HTML for Get request"});
-});
-
 expressApp.use(function (err, req, res, next) {
   console.log("OAuth authorization error");
   //If oauth authorization error
   if (err instanceof OAuthError) {
     //logger.log('info', err); // pass only oauth errors to winston
-    return res.redirect('/login');
+    return res.redirect('/auth/login');
   }
   next(err); // pass on to
 });
