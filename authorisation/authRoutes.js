@@ -10,7 +10,7 @@ module.exports =  (router, expressApp, authRoutesMethods) => {
       var token = "ced6020681f57b9222ebaeda3037b1d945f30d18";
       res.status = 302;
       var location = req.body.redirect_uri
-                    + "?code=" + token
+                    + "#access_token=" + token + "&token_type=bearer" 
                     + "&state=" + req.body.state ;
 
       console.log("Redirect location = " + location);
