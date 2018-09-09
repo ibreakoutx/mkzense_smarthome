@@ -1,10 +1,14 @@
 const deviceInfo = require("../deviceinfo");
+var mqttClient ;
 
 module.exports =  {
   accessRestrictedArea: accessRestrictedArea
 }
 
 function accessRestrictedArea(req, res) {
+
+      mqttClient = req.locals.mqttClient ;
+
       //res.send('You have gained access to the area')
       console.log('post /smarthome', req.headers);
 
@@ -549,6 +553,10 @@ function execDevice(uid, command, device) {
     }
   });
 
-  return {status: "SUCCESS"};
-
+  mqttClient.publish("CONTROL","ON",{}, (err) => {
+    if (!err)
+      return {status: "SUCCESS"};
+    else
+      return {status: "ERROR", errorCode: "MQTT error"};
+  })
 }

@@ -23,6 +23,9 @@ const path = require('path');
 const cons = require('consolidate');
 const swig = require('swig');
 
+const mqtt = require('mqtt')
+const mqttClient = mqtt.connect('mqtt://mkzense.com')
+
 //https setup
 var https;
 var options;
@@ -34,6 +37,12 @@ if (process.env.MKZENSE_ENABLE_SSL) {
       key: fs.readFileSync("/etc/letsencrypt/live/mkzense.com/privkey.pem")
   };
 }
+
+mqttClient.on('connect', () => {
+  console.log("connected to MQTT broker");
+})
+
+expressApp.mqttClient = mqttClient;
 
 expressApp.use(morgan('dev'));
 
