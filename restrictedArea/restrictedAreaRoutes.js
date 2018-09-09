@@ -4,7 +4,7 @@ module.exports =  (router, expressApp, restrictedAreaRoutesMethods) => {
     //Add route for smarthome,
     //oauth will ensure we can proceed only if correct bearer token is present
     function injectMQTTClient(req,res,next) {
-      req.locals.mqttClient = expressApp.mqttClient;
+      res.locals.mqttClient = expressApp.mqttClient;
       next();
     }
 

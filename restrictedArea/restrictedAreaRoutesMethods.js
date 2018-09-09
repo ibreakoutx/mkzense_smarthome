@@ -7,7 +7,7 @@ module.exports =  {
 
 function accessRestrictedArea(req, res) {
 
-      mqttClient = req.locals.mqttClient ;
+      mqttClient = res.locals.mqttClient ;
 
       //res.send('You have gained access to the area')
       console.log('post /smarthome', req.headers);
@@ -444,11 +444,15 @@ function exec(data, response) {
       let curExec = curCommand.execution[j];
       let devices = curCommand.devices;
 
+	var executionResponse;
+	var processResponse = function(status) {
+	    executionResponse = status;
+            console.log("Device exec response", JSON.stringify(status));
+	}
+	
       for (let k = 0; k < devices.length; k++) {
 
-        let executionResponse = execDevice(deviceInfo.id, curExec, devices[k]);
-
-        console.log("Device exec response", JSON.stringify(executionResponse));
+        execDevice(deviceInfo.id, curExec, devices[k], processResponse );
 
         respCommands.push({
           ids: [devices[k].id],
@@ -500,7 +504,7 @@ function exec(data, response) {
  *   }
  * }
  */
-function execDevice(uid, command, device) {
+function execDevice(uid, command, device, cbk) {
 
   let curDevice = {
     id: device.id,
@@ -548,15 +552,16 @@ function execDevice(uid, command, device) {
   Object.keys(command.params).forEach(function (key) {
     if (command.params.hasOwnProperty(key)) {
       if (payLoadDevice.states[key] != command.params[key]) {
-        return {status: "ERROR", errorCode: "notSupported"};
+          cbk( {status: "ERROR", errorCode: "notSupported"} );
       }
     }
   });
 
   mqttClient.publish("CONTROL","ON",{}, (err) => {
     if (!err)
-      return {status: "SUCCESS"};
+	cbk({status: "SUCCESS"});
     else
-      return {status: "ERROR", errorCode: "MQTT error"};
+	cbk({status: "ERROR", errorCode: "MQTT error"});
   })
+
 }
