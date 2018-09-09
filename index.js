@@ -3,11 +3,14 @@
 //on mkzense.com
 //Do not set for local testing.
 
-var port = 3001;
+//****************************************************
+const MQTT_BROKER = 'mqtt://mkzense.com';
+var   PORT  = 3001;
 if (process.env.MKZENSE_ENABLE_SSL) {
-  port=80;
+  PORT=80;
 }
-const securePort = 443;
+const SECURE_PORT = 443;
+//****************************************************
 
 const mySqlConnection = require('./databaseHelpers/mySqlWrapper')
 const accessTokenDBHelper = require('./databaseHelpers/accessTokensDBHelper')(mySqlConnection)
@@ -24,7 +27,7 @@ const cons = require('consolidate');
 const swig = require('swig');
 
 const mqtt = require('mqtt')
-const mqttClient = mqtt.connect('mqtt://mkzense.com')
+const mqttClient = mqtt.connect(MQTT_BROKER)
 
 //https setup
 var https;
@@ -125,13 +128,13 @@ expressApp.use(function (err, req, res, next) {
 expressApp.use(expressApp.oauth.errorHandler()); // Send back oauth compliant response
 
 //http listener
-expressApp.listen(port, () => {
-    console.log(`listening (non-secure:http) on port ${port}`)
+expressApp.listen(PORT, () => {
+    console.log(`listening (non-secure:http) on port ${PORT}`)
 })
 
 if (process.env.MKZENSE_ENABLE_SSL) {
   //https listener
-  https.createServer(options, expressApp).listen(securePort, () =>{
-      console.log(`listening (secure:https) on port ${securePort}`)
+  https.createServer(options, expressApp).listen(SECURE_PORT, () =>{
+      console.log(`listening (secure:https) on port ${SECURE_PORT}`)
   });
 }

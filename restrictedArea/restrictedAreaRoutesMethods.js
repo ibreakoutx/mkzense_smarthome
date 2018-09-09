@@ -506,6 +506,8 @@ function exec(data, response) {
  */
 function execDevice(uid, command, device, cbk) {
 
+  console.log ("** command = " + JSON.stringify(command));
+    
   let curDevice = {
     id: device.id,
     states: {}
@@ -549,6 +551,7 @@ function execDevice(uid, command, device, cbk) {
   payLoadDevice.states = execDevice.states;
 */
 
+    /*
   Object.keys(command.params).forEach(function (key) {
     if (command.params.hasOwnProperty(key)) {
       if (payLoadDevice.states[key] != command.params[key]) {
@@ -556,8 +559,42 @@ function execDevice(uid, command, device, cbk) {
       }
     }
   });
+*/
+    
+    /*
+Turn fan off
+** command = {"command":"action.devices.commands.OnOff","params":{"on":false}}
 
-  mqttClient.publish("CONTROL","ON",{}, (err) => {
+Turn fan on
+** command = {"command":"action.devices.commands.OnOff","params":{"on":true}}
+
+set fan speed low
+** command = {"command":"action.devices.commands.SetFanSpeed","params":{"fanSpeed":"Low"}}
+
+set fan speed medium
+** command = {"command":"action.devices.commands.SetFanSpeed","params":{"fanSpeed":"Medium"}}
+
+set fan speed high
+** command = {"command":"action.devices.commands.SetFanSpeed","params":{"fanSpeed":"High"}}
+     */
+    var mqttMessage ;
+    switch( command.command ) {
+    case "action.devices.commands.OnOff" :
+	if ( command.params.on )
+	    mqttMessage = "FAN_TURN_ON" ;
+	else
+	    mqttMessage = "FAN_TURN_OFF" ;
+	break;
+
+    case "action.devices.commands.SetFanSpeed":
+	mqttMessage = "FAN_SPEED_" + command.params.fanSpeed.toUpperCase() ;
+	break;
+
+    default:
+	mqttMessage = "FAN_UNKNOWN_COMMAND";
+	break;
+    }
+  mqttClient.publish("CONTROL",mqttMessage,{}, (err) => {
     if (!err)
 	cbk({status: "SUCCESS"});
     else
