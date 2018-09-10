@@ -580,10 +580,12 @@ set fan speed high
     var mqttMessage ;
     switch( command.command ) {
     case "action.devices.commands.OnOff" :
-	if ( command.params.on )
-	    mqttMessage = "FAN_TURN_ON" ;
-	else
-	    mqttMessage = "FAN_TURN_OFF" ;
+	if ( command.params.on ) {
+	    mqttMessage = "ON_FAN" ;
+	}
+	else {
+	    mqttMessage = "OFF_FAN" ;
+	}
 	break;
 
     case "action.devices.commands.SetFanSpeed":
@@ -594,7 +596,8 @@ set fan speed high
 	mqttMessage = "FAN_UNKNOWN_COMMAND";
 	break;
     }
-  mqttClient.publish("CONTROL",mqttMessage,{}, (err) => {
+    
+  mqttClient.publish("sensorsiot/feeds/command",mqttMessage,{}, (err) => {
     if (!err)
 	cbk({status: "SUCCESS"});
     else
